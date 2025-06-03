@@ -8,6 +8,7 @@ dotenv.config();
 const app = express();
 
 connectDB();
+// below router import from routes file
 app.use("", router);
 
 const port = process.env.PORT;
