@@ -1,8 +1,9 @@
 const express = require("express");
+const { signin } = require("./controllers/user-controller");
+
 const router = express.Router();
 
-router.get("/api", (req, res) => {
-  res.send("Hello bro");
-});
+// post request
+router.post("/signin", signin);
 
 module.exports = router;
