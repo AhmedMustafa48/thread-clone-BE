@@ -66,3 +66,44 @@ exports.signin = async (req, res) => {
     res.status(400).json({ msg: "Error in signin!", err: err.message });
   }
 };
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Email and password are required!" });
+    }
+
+    const userExists = await User.findOne({ email });
+
+    if (!userExists) {
+      return res.status(400).json({ msg: "Please signin first!" });
+    }
+    const passwordMatched = await bcrypt.compare(password, userExists.password);
+
+    if (!passwordMatched) {
+      return res.status(400).json({ msg: "Incorrect credentials!" });
+    }
+
+    const accessToken = jwt.sign(
+      { token: userExists._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    if (!accessToken) {
+      return res.status(400).json({ msg: "Token not generated in login!" });
+    }
+    res.cookie("token", accessToken, {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.status(400).json({ msg: "User Logged in successfully!" });
+  } catch (err) {
+    res.status(400).json({ msg: "Error while login!", err: err.message });
+  }
+};
