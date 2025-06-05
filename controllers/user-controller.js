@@ -66,7 +66,7 @@ exports.signin = async (req, res) => {
     res.status(400).json({ msg: "Error in signin!", err: err.message });
   }
 };
-
+//                                                                              LOGIN controller
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -105,5 +105,72 @@ exports.login = async (req, res) => {
     res.status(400).json({ msg: "User Logged in successfully!" });
   } catch (err) {
     res.status(400).json({ msg: "Error while login!", err: err.message });
+  }
+};
+//                                                                              user details controller
+exports.userDetails = async (req, res) => {
+  try {
+    const { id } = req.params();
+    if (!id) {
+      return res.status(400).json({ msg: "Id is required" });
+    }
+    const user = await User.findById(id)
+      .select("-password")
+      .populate("followers")
+      .populate("replies")
+      .populate({
+        path: "threads",
+        populate: [{ path: "likes" }, { path: "comments" }, { path: "admin" }],
+      })
+      .populate({ path: "replies", populate: { path: "admin" } })
+      .populate({
+        path: "reposts",
+        populate: [{ path: "likes" }, { path: "comments" }, { path: "admin" }],
+      });
+    res.status(200).json({ msg: "User details fetched!", user });
+  } catch (err) {
+    res.status(400).json({ msg: "Errors in user details!", err: err.message });
+  }
+};
+//                                                                              follow any user controller
+exports.followUser = async (req, res) => {
+  try {
+    const req.user._id
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ msg: "Id is required" });
+    }
+    const userExists = await User.findById(id);
+
+    if (!userExists) {
+      return res.status(400).json({ msg: "User don't exist!" });
+    }
+
+    if (userExists.followers.includes(req.user._id)) {
+      await User.findByIdAndUpdate(
+        userExists._id,
+        {
+          $pull: { followers: req.user._id },
+        },
+        {
+          new: true,
+        }
+      );
+      return res.status(201).json({ msg: `Unfollowed ${userExists.userName}` });
+    }
+    await User.findByIdAndUpdate(
+      userExists._id,
+      {
+        $push: { followers: req.user._id },
+      },
+      {
+        new: true,
+      }
+    );
+    return res.status(201).json({ msg: `Followed ${userExists.userName}` });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ msg: "Error in Follow any user!", err: error.message });
   }
 };
