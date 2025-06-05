@@ -135,7 +135,7 @@ exports.userDetails = async (req, res) => {
 //                                                                              follow any user controller
 exports.followUser = async (req, res) => {
   try {
-    const req.user._id
+    // const req.user._id
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ msg: "Id is required" });
