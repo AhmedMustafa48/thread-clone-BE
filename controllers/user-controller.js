@@ -174,3 +174,11 @@ exports.followUser = async (req, res) => {
       .json({ msg: "Error in Follow any user!", err: error.message });
   }
 };
+
+//                                                                              Update profile
+exports.updateProfile = async (req, res) => {
+  try {
+  } catch (err) {
+    res.status(400).json({ msg: "Error in update profile!", err: err.message });
+  }
+};

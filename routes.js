@@ -12,7 +12,8 @@ const router = express.Router();
 // post request
 router.post("/signin", signin);
 router.post("/login", login);
-router.get("/user/:id", userDetails);
+
+router.get("/user/:id", auth, userDetails);
 
 router.put("/user/follow/:id", auth, followUser);
 
