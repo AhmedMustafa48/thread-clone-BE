@@ -180,6 +180,7 @@ exports.followUser = async (req, res) => {
 //                                                                              Update profile
 exports.updateProfile = async (req, res) => {
   try {
+    // is token authenticated or not , if yes then user found
     const userExists = await User.findById(req.user._id);
     if (!userExists) {
       return res.status(400).json({ msg: "No such user!" });
@@ -240,3 +241,4 @@ exports.updateProfile = async (req, res) => {
     res.status(400).json({ msg: "Error in update profile!", err: err.message });
   }
 };
+//                                                                              Search User
