@@ -242,3 +242,19 @@ exports.updateProfile = async (req, res) => {
   }
 };
 //                                                                              Search User
+exports.searchUser = async (req, res) => {
+  try {
+    const { query } = req.params;
+    const users = await User.find({
+      $or: [
+        { userName: { $regex: query, $options: "i" } },
+        { email: { $regex: query, $options: "i" } },
+      ],
+    });
+    res.status(200).json({ msg: "Searched!", users });
+  } catch (err) {
+    res.status(400).json({ msg: "Error in search user!", err: err.message });
+  }
+};
+
+//                                                                              Logout
