@@ -1,6 +1,8 @@
 const User = require("../models/user-model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const formidable = require("formidable");
+const cloudinary = require("../config/cloudinary");
 
 //                                                                              SIGN IN controller
 exports.signin = async (req, res) => {
@@ -178,6 +180,62 @@ exports.followUser = async (req, res) => {
 //                                                                              Update profile
 exports.updateProfile = async (req, res) => {
   try {
+    const userExists = await User.findById(req.user._id);
+    if (!userExists) {
+      return res.status(400).json({ msg: "No such user!" });
+    }
+
+    const form = formidable();
+    form.parse(req, async (err, fields, files) => {
+      if (err) {
+        return res.status(400).json({ msg: "Form parse error", err });
+      }
+
+      // 1) Update bio if provided
+      if (fields.text) {
+        await User.findByIdAndUpdate(
+          req.user._id,
+          { bio: fields.text },
+          { new: true }
+        );
+      }
+
+      // 2) Handle media upload
+      if (files.media) {
+        // delete old image
+        if (userExists.public_id) {
+          await cloudinary.uploader.destroy(userExists.public_id);
+        }
+
+        // upload into your folder
+        const uploadOpts = {
+          asset_folder: "Threads_clone/Profiles",
+          public_id_prefix: "Threads_clone/Profiles",
+          overwrite: true,
+        };
+        const uploadImage = await cloudinary.uploader.upload(
+          files.media.filepath,
+          uploadOpts
+        );
+
+        if (!uploadImage) {
+          return res.status(400).json({ msg: "Upload failed" });
+        }
+
+        // save the new URL + public_id
+        await User.findByIdAndUpdate(
+          req.user._id,
+          {
+            profilePic: uploadImage.secure_url,
+            public_id: uploadImage.public_id,
+          },
+          { new: true }
+        );
+      }
+
+      // send response once everything’s done
+      res.status(201).json({ msg: "Profile updated successfully!" });
+    });
   } catch (err) {
     res.status(400).json({ msg: "Error in update profile!", err: err.message });
   }
