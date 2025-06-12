@@ -6,6 +6,7 @@ const {
   followUser,
   updateProfile,
   searchUser,
+  logout,
 } = require("./controllers/user-controller");
 const auth = require("./middleware/auth");
 
@@ -20,6 +21,7 @@ router.get("/user/:id", auth, userDetails);
 router.put("/user/follow/:id", auth, followUser);
 router.put("/update", auth, updateProfile);
 router.get("/users/search/:query", auth, searchUser);
+router.post("/logout", auth, logout);
 
 // const protected = async (req, res) => {
 //   res.status(200).json(req.user);
