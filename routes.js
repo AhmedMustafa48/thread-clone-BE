@@ -10,7 +10,11 @@ const {
   myInfo,
 } = require("./controllers/user-controller");
 const auth = require("./middleware/auth");
-const { addPost } = require("./controllers/post-controller");
+const {
+  addPost,
+  allPost,
+  deletePost,
+} = require("./controllers/post-controller");
 
 const router = express.Router();
 
@@ -28,5 +32,7 @@ router.get("/me", auth, myInfo);
 
 //  POST routes
 router.post("/post", auth, addPost);
+router.get("/post", auth, allPost);
+router.delete("/post/:id", auth, deletePost);
 
 module.exports = router;
