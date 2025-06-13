@@ -10,6 +10,7 @@ const {
   myInfo,
 } = require("./controllers/user-controller");
 const auth = require("./middleware/auth");
+const { addPost } = require("./controllers/post-controller");
 
 const router = express.Router();
 
@@ -25,9 +26,7 @@ router.get("/users/search/:query", auth, searchUser);
 router.post("/logout", auth, logout);
 router.get("/me", auth, myInfo);
 
-// const protected = async (req, res) => {
-//   res.status(200).json(req.user);
-// };
-// router.get("/demo", auth, protected);
+//  POST routes
+router.post("/post", auth, addPost);
 
 module.exports = router;
