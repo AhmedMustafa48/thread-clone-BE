@@ -14,6 +14,7 @@ const {
   addPost,
   allPost,
   deletePost,
+  likePost,
 } = require("./controllers/post-controller");
 
 const router = express.Router();
@@ -34,5 +35,6 @@ router.get("/me", auth, myInfo);
 router.post("/post", auth, addPost);
 router.get("/post", auth, allPost);
 router.delete("/post/:id", auth, deletePost);
+router.put("/post/like/:id", auth, likePost);
 
 module.exports = router;

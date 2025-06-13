@@ -121,3 +121,35 @@ exports.deletePost = async (req, res) => {
     res.status(400).json({ msg: "Error in delete post!", err: err.message });
   }
 };
+//                                              Like post
+exports.likePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ msg: "Id is required!" });
+    }
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(400).json({ msg: "No such post!" });
+    }
+    // dislike
+    if (post.likes.includes(req.user._id)) {
+      await Post.findByIdAndUpdate(
+        id,
+        { $pull: { likes: req.user._id } },
+        { new: true }
+      );
+      return res.status(201).json({ msg: "Post unliked!" });
+    }
+    //  like
+
+    await Post.findByIdAndUpdate(
+      id,
+      { $push: { likes: req.user._id } },
+      { new: true }
+    );
+    return res.status(201).json({ msg: "Post liked!" });
+  } catch (err) {
+    res.status(400).json({ msg: "Error in like post!", err: err.message });
+  }
+};
