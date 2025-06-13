@@ -57,8 +57,9 @@ exports.allPost = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip((pageNumber - 1) * 3)
       .limit(3)
-      .populate("admin")
-      .populate("likes")
+      .populate({ path: "admin", select: "-password" })
+      //   without pasword
+      .populate({ path: "likes", select: "-password" })
       .populate({
         path: "comments",
         populate: {
