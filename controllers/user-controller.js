@@ -271,3 +271,12 @@ exports.logout = async (req, res) => {
     res.status(400).json({ msg: "Error in logout!" });
   }
 };
+
+//                                                                              My Info
+exports.myInfo = async (req, res) => {
+  try {
+    res.status(200).json({ me: req.user });
+  } catch (err) {
+    res.status(400).json({ msg: "Error in my info!" });
+  }
+};
