@@ -18,6 +18,7 @@ const {
   repost,
   singlePost,
 } = require("./controllers/post-controller");
+const { addComment } = require("./controllers/comment-controller");
 
 const router = express.Router();
 
@@ -40,5 +41,8 @@ router.delete("/post/:id", auth, deletePost);
 router.put("/post/like/:id", auth, likePost);
 router.put("/repost/:id", auth, repost);
 router.get("/post/:id", auth, singlePost);
+
+//  COMMENT routes
+router.post("/comment/:id", auth, addComment);
 
 module.exports = router;
