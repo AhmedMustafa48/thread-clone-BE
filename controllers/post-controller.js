@@ -194,14 +194,14 @@ exports.singlePost = async (req, res) => {
         path: "admin",
         select: "-password",
       })
-      .populate({ path: "likes" })
+      .populate({ path: "likes", select: "-password" })
       .populate({
         path: "comments",
         populate: {
           path: "admin",
         },
       });
-    res.status(200).json({ msg: "" });
+    res.status(200).json({ msg: "Post fetched!", post });
   } catch (err) {
     res.status(400).json({ msg: "Error in single post!" });
   }
