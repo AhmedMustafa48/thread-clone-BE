@@ -182,3 +182,27 @@ exports.repost = async (req, res) => {
     res.status(400).json({ msg: "Error in repost!", err: err.message });
   }
 };
+//                                              fetch single post
+exports.singlePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ msg: "Id is required!" });
+    }
+    const post = await Post.findById(id)
+      .populate({
+        path: "admin",
+        select: "-password",
+      })
+      .populate({ path: "likes" })
+      .populate({
+        path: "comments",
+        populate: {
+          path: "admin",
+        },
+      });
+    res.status(200).json({ msg: "" });
+  } catch (err) {
+    res.status(400).json({ msg: "Error in single post!" });
+  }
+};
