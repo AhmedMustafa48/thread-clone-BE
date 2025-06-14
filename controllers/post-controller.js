@@ -4,6 +4,7 @@ const Comment = require("../models/comment-model");
 
 const cloudinary = require("../config/cloudinary");
 const formidable = require("formidable");
+const mongoose = require("mongoose");
 
 exports.addPost = async (req, res) => {
   try {
@@ -152,5 +153,32 @@ exports.likePost = async (req, res) => {
     return res.status(201).json({ msg: "Post liked!" });
   } catch (err) {
     res.status(400).json({ msg: "Error in like post!", err: err.message });
+  }
+};
+//                                              Repost
+exports.repost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ msg: "Id is needed!" });
+    }
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(400).json({ msg: "No such post!" });
+    }
+    const newId = new mongoose.Types.ObjectId(id);
+    if (req.user.reposts.includes(newId)) {
+      return res.status(400).json({ msg: "This post is already reposted!" });
+    }
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $push: { reposts: post._id },
+      },
+      { new: true }
+    );
+    res.status(201).json({ msg: "Reposted!" });
+  } catch (err) {
+    res.status(400).json({ msg: "Error in repost!", err: err.message });
   }
 };
