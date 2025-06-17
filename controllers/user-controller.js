@@ -103,6 +103,7 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      partitioned: true,
     });
 
     res.status(200).json({ msg: "User Logged in successfully!" });
