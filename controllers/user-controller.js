@@ -58,6 +58,7 @@ exports.signin = async (req, res) => {
       httpOnly: true,
       sameSite: "none",
       secure: true,
+      partitioned: true,
     });
 
     // Successful user signed in
