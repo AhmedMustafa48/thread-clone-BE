@@ -105,7 +105,7 @@ exports.login = async (req, res) => {
       sameSite: "none",
     });
 
-    res.status(400).json({ msg: "User Logged in successfully!" });
+    res.status(200).json({ msg: "User Logged in successfully!" });
   } catch (err) {
     res.status(400).json({ msg: "Error while login!", err: err.message });
   }
